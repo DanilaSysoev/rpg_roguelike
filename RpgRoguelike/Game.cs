@@ -2,8 +2,8 @@ namespace RpgRoguelike;
 
 public class Game
 {
-    public int MapWidth { get; private set; } = 100;
-    public int MapHeigth { get; private set; } = 100;
+    public int MapWidth { get; private set; }
+    public int MapHeigth { get; private set; }
 
 
     public static Game Instance
@@ -59,7 +59,14 @@ public class Game
         Console.WriteLine("Game is running... Press Escape to end game.");
     }
     
+    private Game()
+    {
+        MapHeigth = 100;
+        MapWidth = 100;
 
-    private bool gameStopped = false;
+        gameStopped = false;
+    }
+
+    private bool gameStopped;
     private static Game? instance;
 }
