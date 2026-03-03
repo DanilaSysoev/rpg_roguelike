@@ -2,7 +2,7 @@ namespace RpgRoguelike.Core;
 
 public class Player
 {
-    public int Golg { get; set; }
+    public int Gold { get; set; }
     public int Health
     { 
         get
@@ -35,6 +35,16 @@ public class Player
 
         MaxHealth = maxHealth;
         Health = maxHealth;
+        Position = position;
+    }
+
+    public Player(int maxHealth, int health, Position position)
+    {
+        if(maxHealth < 1)
+            throw new ArgumentException("Max health must be greater than 0");
+
+        MaxHealth = maxHealth;
+        Health = Math.Min(health, MaxHealth);        
         Position = position;
     }
 

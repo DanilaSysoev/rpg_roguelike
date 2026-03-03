@@ -16,6 +16,6 @@ public class GoldReward : IReward
 
     public void Get(Player player)
     {
-        player.Golg += Value;
+        player.Gold += Value;
     }
 }

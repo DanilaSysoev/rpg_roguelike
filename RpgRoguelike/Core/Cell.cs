@@ -25,5 +25,10 @@ public class Cell
         rewards.Remove(reward);
     }
 
+    public void RemoveAllRewards()
+    {
+        rewards.Clear();
+    }
+
     private readonly List<IReward> rewards = new();
 }
