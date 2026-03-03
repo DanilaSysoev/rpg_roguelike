@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <ItemGroup>
-    <ProjectReference Include="..\RpgRoguelikeCore\RpgRoguelikeCore.csproj" />
+    <Folder Include="Core/" />
+    <Folder Include="Services/" />
   </ItemGroup>
 
   <PropertyGroup>
