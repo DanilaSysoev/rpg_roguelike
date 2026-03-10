@@ -1,4 +1,5 @@
 using RpgRoguelike.Gameplay;
+using RpgRoguelike.Services.Base;
 
 namespace RpgRoguelike.Services;
 

@@ -1,6 +1,6 @@
 using RpgRoguelike.Gameplay;
 
-namespace RpgRoguelike.Services;
+namespace RpgRoguelike.Services.Base;
 
 public interface IRewardCreator
 {
