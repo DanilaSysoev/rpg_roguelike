@@ -1,4 +1,5 @@
 using RpgRoguelike.Core;
+using RpgRoguelike.Services;
 
 namespace RpgRoguelike;
 
@@ -100,7 +101,10 @@ public class Game
         MapWidth = 40;
 
         drawBuffer = new char[MapHeigth, MapWidth];
-        room = new Room(MapWidth, MapHeigth);
+        room = new RandomRoomBuilder()
+            .SetSize(MapWidth, MapHeigth)
+            .SetRandomSeed((int)DateTime.Now.Ticks)
+            .Build();
         player = new Player(100, 50, new Position(5, 5));
 
         gameStopped = false;
