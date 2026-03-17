@@ -1,6 +1,8 @@
+using System.Runtime.CompilerServices;
 using RpgRoguelike.Exceptions;
 using RpgRoguelike.Gameplay;
 
+[assembly: InternalsVisibleTo("RpgRoguelike.Tests")]
 namespace RpgRoguelike.Core;
 
 public class Room
