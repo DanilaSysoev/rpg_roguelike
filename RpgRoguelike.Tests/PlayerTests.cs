@@ -1,4 +1,5 @@
 using RpgRoguelike.Core;
+using RpgRoguelike.Services.Building.Entities;
 
 namespace RpgRoguelike.Tests;
 
@@ -9,7 +10,11 @@ public class PlayerTests
     [SetUp]
     public void Setup()
     {
-        player = new Player(100, new Position(0, 0));
+        player = new PlayerBuilder().SetMaxHealth(100)
+                                    .SetHealth(100)
+                                    .SetPosition(new Position(0, 0))
+                                    .SetName("Player")
+                                    .Build();
     }
 
     [Test]

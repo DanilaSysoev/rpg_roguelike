@@ -2,8 +2,9 @@ using RpgRoguelike.Core;
 using RpgRoguelike.Exceptions;
 using RpgRoguelike.Gameplay;
 using RpgRoguelike.Services.Base;
+using RpgRoguelike.Services.Building.Rewards;
 
-namespace RpgRoguelike.Services;
+namespace RpgRoguelike.Services.Building.Rooms;
 
 public class RandomRoomBuilder : IRoomBuilder
 {

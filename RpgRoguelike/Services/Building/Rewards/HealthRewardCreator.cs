@@ -1,7 +1,7 @@
 using RpgRoguelike.Gameplay;
 using RpgRoguelike.Services.Base;
 
-namespace RpgRoguelike.Services;
+namespace RpgRoguelike.Services.Building.Rewards;
 
 public class HealthRewardCreator : IRewardCreator
 {

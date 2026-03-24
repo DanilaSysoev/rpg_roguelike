@@ -35,4 +35,23 @@ public struct Position
     {
         return $"({Line}, {Column})";
     }
+
+    public static bool operator==(Position a, Position b)
+    {
+        return a.Line == b.Line && a.Column == b.Column;
+    }
+    public static bool operator!=(Position a, Position b)
+    {
+        return !(a == b);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is Position position && this == position;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Line, Column);
+    }
 }
