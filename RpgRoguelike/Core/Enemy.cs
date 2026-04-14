@@ -1,7 +1,11 @@
+using RpgRoguelike.Core.EnemyStrategies;
+
 namespace RpgRoguelike.Core;
 
 public class Enemy : Entity
 {
+    public IMovementStrategy? MovementStrategy { get; internal set; }
+
     public override void Update()
     {
         base.Update();
@@ -36,5 +40,7 @@ public class Enemy : Entity
     }
 
     protected virtual void Move()
-    {}
+    {
+        MovementStrategy?.Move(this);
+    }
 }

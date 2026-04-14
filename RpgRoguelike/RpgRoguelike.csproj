@@ -3,7 +3,6 @@
     <Folder Include="Core/" />
     <Folder Include="Core/Effects/" />
     <Folder Include="Core/Weapons/Charms/" />
-    <Folder Include="Exceptions/" />
     <Folder Include="Services/Building/Charms/" />
     <Folder Include="Services/Building/Weapons/" />
   </ItemGroup>

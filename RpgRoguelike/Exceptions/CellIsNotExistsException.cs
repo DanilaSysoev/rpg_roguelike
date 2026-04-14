@@ -2,9 +2,9 @@ using RpgRoguelike.Core;
 
 namespace RpgRoguelike.Exceptions;
 
-public class CellNotExistsException : Exception
+public class CellIsNotExistsException : Exception
 {
-    public CellNotExistsException(Position position)
+    public CellIsNotExistsException(Position position)
         : base($"Cell with position {position} does not exists")
     {
     }
