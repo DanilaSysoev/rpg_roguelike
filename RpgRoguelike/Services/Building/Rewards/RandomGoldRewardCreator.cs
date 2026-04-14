@@ -1,11 +1,11 @@
 using RpgRoguelike.Gameplay;
 using RpgRoguelike.Services.Base;
 
-namespace RpgRoguelike.Services;
+namespace RpgRoguelike.Services.Building.Rewards;
 
-public class RandomHealthRewardCreator : IRewardCreator
+public class RandomGoldRewardCreator : IRewardCreator
 {
-    public RandomHealthRewardCreator(int minValue, int maxValue, Random random)
+    public RandomGoldRewardCreator(int minValue, int maxValue, Random random)
     {
         this.minValue = minValue;
         this.maxValue = maxValue;
@@ -15,7 +15,7 @@ public class RandomHealthRewardCreator : IRewardCreator
     public IReward Create()
     {
         int value = random.Next(minValue, maxValue + 1);
-        return new HealthReward(value);
+        return new GoldReward(value);
     }
 
     private readonly int minValue;
