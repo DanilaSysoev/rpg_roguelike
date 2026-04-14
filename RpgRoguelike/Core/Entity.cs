@@ -22,6 +22,7 @@ public class Entity
     public bool IsStunned { get; set; }
     public IWeapon? Weapon { get; set; }
     public IReadOnlyList<IEffect> Effects => effects;
+    public bool IsAlive => Health > 0;
 
     public void Move(Direction direction)
     {

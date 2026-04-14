@@ -18,7 +18,7 @@ public class RoomTests
     [Test]
     public void GetCell_NonExistingPosition_ThrowsException()
     {
-        Assert.Throws<CellNotExistsException>(
+        Assert.Throws<CellIsNotExistsException>(
             () => room.GetCell(new Position(100, 100))
         );
     }
@@ -28,7 +28,7 @@ public class RoomTests
     {
         var pos = new Position(100, 100);
 
-        var exc = Assert.Throws<CellNotExistsException>(
+        var exc = Assert.Throws<CellIsNotExistsException>(
             () => room.GetCell(pos)
         );
 

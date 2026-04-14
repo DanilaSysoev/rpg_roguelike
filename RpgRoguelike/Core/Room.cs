@@ -1,6 +1,5 @@
 using System.Runtime.CompilerServices;
 using RpgRoguelike.Exceptions;
-using RpgRoguelike.Gameplay;
 
 [assembly: InternalsVisibleTo("RpgRoguelike.Tests")]
 namespace RpgRoguelike.Core;
@@ -8,6 +7,7 @@ namespace RpgRoguelike.Core;
 public class Room
 {
     public IEnumerable<Cell> Cells => cells.Values;
+    public IEnumerable<Enemy> Enemies => enemies;
 
     internal Room()
     {}
@@ -23,15 +23,39 @@ public class Room
     public Cell GetCell(Position position)
     {
         if (!cells.ContainsKey(position))
-            throw new CellNotExistsException(position);
+            throw new CellIsNotExistsException(position);
         return cells[position];
+    }
+
+    public void AddEnemy(Enemy enemy)
+    {
+        if (!cells.ContainsKey(enemy.Position))
+            throw new CellIsNotExistsException(enemy.Position);
+        if (!cells[enemy.Position].IsPassable)
+            throw new CellIsNotPassableException(enemy.Position);
+        enemies.Add(enemy);
+    }
+
+    public void RemoveEnemy(Enemy enemy)
+    {
+        enemies.Remove(enemy);
+    }
+
+    public void Update()
+    {
+        enemies.RemoveAll(e => !e.IsAlive);
+        foreach (var enemy in enemies)
+            enemy.Update();
     }
 
     public bool CanMoveTo(Position position)
     {
         return cells.ContainsKey(position) && 
-               cells[position].IsPassable;
+               cells[position].IsPassable &&
+               enemies.All(e => e.Position != position) &&
+               Game.Instance.Player.Position != position;
     }
 
     private readonly Dictionary<Position, Cell> cells = new();
+    private readonly List<Enemy> enemies = new();
 }
