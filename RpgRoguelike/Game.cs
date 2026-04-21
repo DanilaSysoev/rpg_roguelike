@@ -1,5 +1,6 @@
 using RpgRoguelike.Core;
 using RpgRoguelike.Core.Control;
+using RpgRoguelike.Services.Base;
 using RpgRoguelike.Services.Building.Entities;
 using RpgRoguelike.Services.Building.Rooms;
 using RpgRoguelike.Services.Building.Weapons;
@@ -8,8 +9,6 @@ namespace RpgRoguelike;
 
 public class Game
 {
-    public int MapWidth { get; private set; }
-    public int MapHeight { get; private set; }
     public Player Player => player;
     public Room Room => room;
 
@@ -20,23 +19,23 @@ public class Game
             if (instance == null)
             {
                 instance = new Game();
-                instance.Init();
             }
             return instance;
         }
     }
 
-    private void Init()
+    public void Init(IRoomBuilder roomBuilder)
     {
-        room = new RandomRoomBuilder()
-            .SetSize(MapWidth, MapHeight)
-            .SetRandomSeed((int)DateTime.Now.Ticks)
-            .Build();
+        room = roomBuilder.Build();
+
+        drawBuffer = new char[room.Height, room.Width];
         gameStopped = false;
 
         ConfigureCommands();
         Console.Clear();
     }
+
+    public static void Cleanup() { instance = null; }
 
     public void Run()
     {
@@ -50,7 +49,7 @@ public class Game
 
     private bool GemeIsEnded()
     {
-        return gameStopped;
+        return gameStopped || !player.IsAlive;
     }
 
     private void HandleInput()
@@ -69,8 +68,8 @@ public class Game
 
         curr.RemoveAllRewards();
 
-        player.Update();
         room.Update();
+        player.Update();
     }
 
     private void Render()
@@ -100,10 +99,6 @@ public class Game
     
     private Game()
     {
-        MapHeight = 15;
-        MapWidth = 40;
-
-        drawBuffer = new char[MapHeight, MapWidth];
         var hammer = new HammerBuilder().SetStunChance(30)
                                         .SetStunTime(1)
                                         .SetName("Hammer")
@@ -120,9 +115,9 @@ public class Game
 
     private void ClearDrawBuffer()
     {
-        for(int line = 0; line < MapHeight; ++line)
+        for(int line = 0; line < room.Height; ++line)
         {
-            for(int column = 0; column < MapWidth; ++column)
+            for(int column = 0; column < room.Width; ++column)
             {
                 drawBuffer[line, column] = ' ';
             }
@@ -153,9 +148,9 @@ public class Game
 
     private void Flush()
     {
-        for(int line = 0; line < MapHeight; ++line)
+        for(int line = 0; line < room.Height; ++line)
         {
-            for(int column = 0; column < MapWidth; ++column)
+            for(int column = 0; column < room.Width; ++column)
             {
                 if(line < Console.BufferHeight && column < Console.BufferWidth - 1)
                     Console.Write(drawBuffer[line, column]);
@@ -201,7 +196,7 @@ public class Game
     private bool gameStopped;
     private static Game? instance;
 
-    private readonly char[,] drawBuffer;
+    private char[,] drawBuffer = null!;
     private Room room = null!;
     private readonly Player player;
 

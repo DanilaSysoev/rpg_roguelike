@@ -5,6 +5,7 @@ namespace RpgRoguelike.Core;
 public class Player : Entity
 {
     public int Gold { get; set; }
+    public Position NextPosition { get; set; }
 
     public void MotionCommandHandler(CommandData data)
     {
@@ -13,20 +14,27 @@ public class Player : Entity
         {
             case Direction.Up:
                 if (room.CanMoveTo(Position.UpNeighbor()))
-                    Move(Direction.Up);
+                    NextPosition = Position.UpNeighbor();
                 break;
             case Direction.Right:
                 if(room.CanMoveTo(Position.RightNeighbor()))
-                    Move(Direction.Right);
+                    NextPosition = Position.RightNeighbor();
                 break;
             case Direction.Down:
                 if (room.CanMoveTo(Position.DownNeighbor()))
-                    Move(Direction.Down);
+                    NextPosition = Position.DownNeighbor();
                 break;
             case Direction.Left:
                 if (room.CanMoveTo(Position.LeftNeighbor()))
-                    Move(Direction.Left);
+                    NextPosition = Position.LeftNeighbor();
                 break;
         }
+    }
+
+    public override void Update()
+    {
+        base.Update();
+        Position = NextPosition;
+        NextPosition = Position;
     }
 }

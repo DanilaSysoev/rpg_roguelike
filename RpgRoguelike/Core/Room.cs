@@ -9,6 +9,14 @@ public class Room
     public IEnumerable<Cell> Cells => cells.Values;
     public IEnumerable<Enemy> Enemies => enemies;
 
+    public int MinLine { get; private set; }
+    public int MaxLine { get; private set; }
+    public int MinColumn { get; private set; }
+    public int MaxColumn { get; private set; }
+
+    public int Width => MaxColumn - MinColumn + 1;
+    public int Height => MaxLine - MinLine + 1;
+
     internal Room()
     {}
 
@@ -18,6 +26,8 @@ public class Room
             cells.Add(cell.Position, cell);
         else
             cells[cell.Position] = cell;
+        
+        UpdateMinMax(cell.Position);
     }
 
     public Cell GetCell(Position position)
@@ -54,6 +64,14 @@ public class Room
                cells[position].IsPassable &&
                enemies.All(e => e.Position != position) &&
                Game.Instance.Player.Position != position;
+    }
+
+    private void UpdateMinMax(Position position)
+    {
+        if(position.Line < MinLine) MinLine = position.Line; 
+        if(position.Line > MaxLine) MaxLine = position.Line;
+        if(position.Column < MinColumn) MinColumn = position.Column;
+        if(position.Column > MaxColumn) MaxColumn = position.Column;
     }
 
     private readonly Dictionary<Position, Cell> cells = new();
