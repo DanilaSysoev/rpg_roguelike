@@ -1,4 +1,5 @@
 using RpgRoguelike.Core;
+using RpgRoguelike.Core.Control;
 using RpgRoguelike.Services.Building.Entities;
 using RpgRoguelike.Services.Building.Rooms;
 using RpgRoguelike.Services.Building.Weapons;
@@ -32,6 +33,8 @@ public class Game
             .SetRandomSeed((int)DateTime.Now.Ticks)
             .Build();
         gameStopped = false;
+
+        ConfigureCommands();
         Console.Clear();
     }
 
@@ -53,28 +56,9 @@ public class Game
     private void HandleInput()
     {
         var key = Console.ReadKey(true);
-        switch (key.Key)
-        {
-            case ConsoleKey.Escape:
-                gameStopped = true;
-                break;
-            case ConsoleKey.UpArrow:
-                if (room.CanMoveTo(player.Position.UpNeighbor()))
-                    player.Move(Direction.Up);
-                break;
-            case ConsoleKey.RightArrow:
-                if(room.CanMoveTo(player.Position.RightNeighbor()))
-                    player.Move(Direction.Right);
-                break;
-            case ConsoleKey.DownArrow:
-                if (room.CanMoveTo(player.Position.DownNeighbor()))
-                    player.Move(Direction.Down);
-                break;
-            case ConsoleKey.LeftArrow:
-                if (room.CanMoveTo(player.Position.LeftNeighbor()))
-                    player.Move(Direction.Left);
-                break;
-        }
+
+        if (commands.ContainsKey(key.Key))
+            commands[key.Key].Execute();
     }
 
     private void Update()
@@ -180,10 +164,46 @@ public class Game
         }
     }
 
+    private void ConfigureCommands()
+    {
+        ICommand exitCommand = new Command();
+        ICommand moveUpCommand =
+            new MotionCommand { Direction = Direction.Up };
+        ICommand moveDownCommand =
+            new MotionCommand { Direction = Direction.Down };
+        ICommand moveLeftCommand =
+            new MotionCommand { Direction = Direction.Left };
+        ICommand moveRightCommand = new
+            MotionCommand { Direction = Direction.Right };
+
+        exitCommand.OnExecute += ExitCommandHandler;
+        moveUpCommand.OnExecute += player.MotionCommandHandler;
+        moveDownCommand.OnExecute += player.MotionCommandHandler;
+        moveLeftCommand.OnExecute += player.MotionCommandHandler;
+        moveRightCommand.OnExecute += player.MotionCommandHandler;
+        
+        commands.Add(ConsoleKey.Escape, exitCommand);
+        commands.Add(ConsoleKey.UpArrow, moveUpCommand);
+        commands.Add(ConsoleKey.DownArrow, moveDownCommand);
+        commands.Add(ConsoleKey.LeftArrow, moveLeftCommand);
+        commands.Add(ConsoleKey.RightArrow, moveRightCommand);
+        commands.Add(ConsoleKey.W, moveUpCommand);
+        commands.Add(ConsoleKey.S, moveDownCommand);
+        commands.Add(ConsoleKey.A, moveLeftCommand);
+        commands.Add(ConsoleKey.D, moveRightCommand);
+    }
+
+    private void ExitCommandHandler(CommandData data)
+    {
+        gameStopped = true;
+    }
+
     private bool gameStopped;
     private static Game? instance;
 
     private readonly char[,] drawBuffer;
     private Room room = null!;
     private readonly Player player;
+
+    private readonly Dictionary<ConsoleKey, ICommand> commands = new();
 }

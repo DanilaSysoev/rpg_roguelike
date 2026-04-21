@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <Folder Include="Core/" />
+    <Folder Include="Core/Control/" />
     <Folder Include="Core/Effects/" />
     <Folder Include="Core/Weapons/Charms/" />
     <Folder Include="Services/Building/Charms/" />
