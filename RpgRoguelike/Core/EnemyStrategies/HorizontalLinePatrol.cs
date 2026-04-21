@@ -5,9 +5,13 @@ namespace RpgRoguelike.Core.EnemyStrategies;
 public class HorizontalLinePatrol : IMovementStrategy
 {
     public HorizontalLinePatrol(
+        int leftBorder,
+        int rightBorder,
         Direction direction = Direction.Right
     )
     {
+        this.leftBorder = leftBorder;
+        this.rightBorder = rightBorder;
         this.direction = direction;
     }
 
@@ -29,15 +33,17 @@ public class HorizontalLinePatrol : IMovementStrategy
             enemy.Position = newPosition;
     }
 
-    private static bool IsOnLeftBorder(Enemy enemy)
+    private bool IsOnLeftBorder(Enemy enemy)
     {
-        return enemy.Position.Column == 1;
+        return enemy.Position.Column == leftBorder;
     }
 
-    private static bool IsOnRightBorder(Enemy enemy)
+    private bool IsOnRightBorder(Enemy enemy)
     {
-        return enemy.Position.Column == Game.Instance.MapWidth - 2;
+        return enemy.Position.Column == rightBorder;
     }
 
     private Direction direction;
+    private readonly int leftBorder;
+    private readonly int rightBorder;
 }

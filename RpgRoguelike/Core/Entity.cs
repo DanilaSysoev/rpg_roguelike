@@ -24,25 +24,6 @@ public class Entity
     public IReadOnlyList<IEffect> Effects => effects;
     public bool IsAlive => Health > 0;
 
-    public void Move(Direction direction)
-    {
-        switch(direction)
-        {
-            case Direction.Up:
-                Position = Position.UpNeighbor();
-                break;
-            case Direction.Right:
-                Position = Position.RightNeighbor();
-                break;
-            case Direction.Down:
-                Position = Position.DownNeighbor();
-                break;
-            case Direction.Left:
-                Position = Position.LeftNeighbor();
-                break;
-        }
-    }
-
     public virtual void Attack(Entity target)
     {
         if(Weapon is not null)

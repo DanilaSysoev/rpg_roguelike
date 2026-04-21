@@ -11,6 +11,15 @@ namespace RpgRoguelike.Services.Building.Rooms;
 
 public class RandomRoomBuilder : IRoomBuilder
 {
+    public RandomRoomBuilder()
+    {         
+        enemyBuilders = [
+            BuildHorizontalPatrolEnemy,
+            BuildVerticalPatrolEnemy,
+            BuildRectangularPatrolEnemy,
+        ];
+    }
+
     public Room Build()
     {
         Room room = new();
@@ -136,22 +145,17 @@ public class RandomRoomBuilder : IRoomBuilder
     private const int MinEnemieCount = 1;
     private const int MaxEnemieCount = 5;
 
-    private readonly List<Func<Room, Random, Enemy>> enemyBuilders = 
-    [
-        (room, random) => BuildHorizontalPatrolEnemy(room, random),
-        (room, random) => BuildVerticalPatrolEnemy(room, random),
-        (room, random) => BuildRectangularPatrolEnemy(room, random),
-    ];
+    private readonly List<Func<Room, Random, Enemy>> enemyBuilders;
 
-    private static Enemy BuildRectangularPatrolEnemy(Room room, Random random)
+    private Enemy BuildRectangularPatrolEnemy(Room room, Random random)
     {
-        int rectWidth = random.Next(Game.Instance.MapWidth / 4, Game.Instance.MapWidth / 2);
-        int rectHeight = random.Next(Game.Instance.MapHeight / 4, Game.Instance.MapHeight / 2);
+        int rectWidth = random.Next(width / 4, width / 2);
+        int rectHeight = random.Next(height / 4, height / 2);
         while(true)
         {
             Position topLeft = new Position(
-                random.Next(1, Game.Instance.MapHeight - rectHeight - 2),
-                random.Next(1, Game.Instance.MapWidth - rectWidth - 2)
+                random.Next(1, height - rectHeight - 2),
+                random.Next(1, width - rectWidth - 2)
             );
             if (room.GetCell(topLeft).IsPassable)                
                 return new EnemyBuilder()
@@ -178,18 +182,20 @@ public class RandomRoomBuilder : IRoomBuilder
         }
     }
 
-    private static Enemy BuildVerticalPatrolEnemy(Room room, Random random)
+    private Enemy BuildVerticalPatrolEnemy(Room room, Random random)
     {
-        int col = random.Next(1, Game.Instance.MapWidth - 2);
+        int col = random.Next(1, width - 2);
         while(true)
         {
             Position pos = new Position(
-                random.Next(1, Game.Instance.MapHeight - 2),
+                random.Next(1, height - 2),
                 col
             );
             if (room.GetCell(pos).IsPassable)                
                 return new EnemyBuilder()
-                           .SetMovementStrategy(new VerticalLinePatrol())
+                           .SetMovementStrategy(
+                                new VerticalLinePatrol(1, height - 2)
+                            )
                            .SetMaxHealth(50)
                            .SetHealth(50)
                            .SetPosition(pos)
@@ -203,18 +209,20 @@ public class RandomRoomBuilder : IRoomBuilder
         }
     }
 
-    private static Enemy BuildHorizontalPatrolEnemy(Room room, Random random)
+    private Enemy BuildHorizontalPatrolEnemy(Room room, Random random)
     {
-        int line = random.Next(1, Game.Instance.MapHeight - 2);
+        int line = random.Next(1, height - 2);
         while(true)
         {
             Position pos = new Position(
                 line,
-                random.Next(1, Game.Instance.MapWidth - 2)
+                random.Next(1, width - 2)
             );
             if (room.GetCell(pos).IsPassable)                
                 return new EnemyBuilder()
-                           .SetMovementStrategy(new HorizontalLinePatrol())
+                           .SetMovementStrategy(
+                                new HorizontalLinePatrol(1, width - 2)
+                            )
                            .SetMaxHealth(50)
                            .SetHealth(50)
                            .SetPosition(pos)

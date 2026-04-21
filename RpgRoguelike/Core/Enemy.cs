@@ -15,8 +15,10 @@ public class Enemy : Entity
 
     private void Action()
     {
-        Move();
-        Attack(Game.Instance.Player);
+        if(WithinReach(Game.Instance.Player))
+            Attack(Game.Instance.Player);
+        else
+            Move();
     }
 
     public override void Attack(Entity target)
@@ -24,11 +26,8 @@ public class Enemy : Entity
         if(Weapon is null)
             return;
         
-        if(WithinReach(target))
-        {
-            Weapon.Attack(target);
-            Weapon.ApplyEffect(target);
-        }
+        Weapon.Attack(target);
+        Weapon.ApplyEffect(target);
     }
 
     private bool WithinReach(Entity player)

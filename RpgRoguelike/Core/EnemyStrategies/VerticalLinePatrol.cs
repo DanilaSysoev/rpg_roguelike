@@ -6,9 +6,13 @@ namespace RpgRoguelike.Core.EnemyStrategies;
 public class VerticalLinePatrol : IMovementStrategy
 {
     public VerticalLinePatrol(
+        int topBorder,
+        int bottomBorder,
         Direction direction = Direction.Down
     )
     {
+        this.topBorder = topBorder;
+        this.bottomBorder = bottomBorder;
         this.direction = direction;
     }
 
@@ -29,15 +33,17 @@ public class VerticalLinePatrol : IMovementStrategy
             enemy.Position = newPosition;
     }
 
-    private static bool IsOnTopBorder(Enemy enemy)
+    private bool IsOnTopBorder(Enemy enemy)
     {
-        return enemy.Position.Line == 1;
+        return enemy.Position.Line == topBorder;
     }
 
-    private static bool IsOnBottomBorder(Enemy enemy)
+    private bool IsOnBottomBorder(Enemy enemy)
     {
-        return enemy.Position.Line == Game.Instance.MapHeight - 2;
+        return enemy.Position.Line == bottomBorder;
     }
 
     private Direction direction;
+    private readonly int topBorder;
+    private readonly int bottomBorder;
 }

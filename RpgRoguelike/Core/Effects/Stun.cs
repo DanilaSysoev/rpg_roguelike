@@ -1,10 +1,8 @@
-using System;
-
 namespace RpgRoguelike.Core.Effects;
 
 public class Stun : IEffect
 {
-    public bool IsActive => time > 0;
+    public bool IsActive => time >= 0;
 
     public Stun(int time)
     {
@@ -13,8 +11,9 @@ public class Stun : IEffect
 
     public void Apply(Entity target)
     {
+        if (time == 0) target.IsStunned = false;
+        else target.IsStunned = true;
         --time;
-        target.IsStunned = true;
     }
 
     public override string ToString()

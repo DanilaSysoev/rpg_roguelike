@@ -1,15 +1,13 @@
 using RpgRoguelike.Core;
 using RpgRoguelike.Core.Control;
+using RpgRoguelike.Services.Base;
 using RpgRoguelike.Services.Building.Entities;
-using RpgRoguelike.Services.Building.Rooms;
 using RpgRoguelike.Services.Building.Weapons;
 
 namespace RpgRoguelike;
 
 public class Game
 {
-    public int MapWidth { get; private set; }
-    public int MapHeight { get; private set; }
     public Player Player => player;
     public Room Room => room;
 
@@ -20,23 +18,23 @@ public class Game
             if (instance == null)
             {
                 instance = new Game();
-                instance.Init();
             }
             return instance;
         }
     }
 
-    private void Init()
+    public void Init(IRoomBuilder roomBuilder)
     {
-        room = new RandomRoomBuilder()
-            .SetSize(MapWidth, MapHeight)
-            .SetRandomSeed((int)DateTime.Now.Ticks)
-            .Build();
+        room = roomBuilder.Build();
+
+        drawBuffer = new char[room.Height, room.Width];
         gameStopped = false;
 
         ConfigureCommands();
         Console.Clear();
     }
+
+    public static void Cleanup() { instance = null; }
 
     public void Run()
     {
@@ -50,7 +48,7 @@ public class Game
 
     private bool GemeIsEnded()
     {
-        return gameStopped;
+        return gameStopped || !player.IsAlive;
     }
 
     private void HandleInput()
@@ -63,13 +61,14 @@ public class Game
 
     private void Update()
     {
+        player.Update();
+
         Cell curr = room.GetCell(player.Position);
         foreach(var reward in curr.Rewards)
             reward.Get(player);
 
         curr.RemoveAllRewards();
 
-        player.Update();
         room.Update();
     }
 
@@ -100,11 +99,7 @@ public class Game
     
     private Game()
     {
-        MapHeight = 15;
-        MapWidth = 40;
-
-        drawBuffer = new char[MapHeight, MapWidth];
-        var hammer = new HammerBuilder().SetStunChance(30)
+        var hammer = new HammerBuilder().SetStunChance(100)
                                         .SetStunTime(1)
                                         .SetName("Hammer")
                                         .SetDamage(20)
@@ -120,9 +115,9 @@ public class Game
 
     private void ClearDrawBuffer()
     {
-        for(int line = 0; line < MapHeight; ++line)
+        for(int line = 0; line < room.Height; ++line)
         {
-            for(int column = 0; column < MapWidth; ++column)
+            for(int column = 0; column < room.Width; ++column)
             {
                 drawBuffer[line, column] = ' ';
             }
@@ -153,9 +148,9 @@ public class Game
 
     private void Flush()
     {
-        for(int line = 0; line < MapHeight; ++line)
+        for(int line = 0; line < room.Height; ++line)
         {
-            for(int column = 0; column < MapWidth; ++column)
+            for(int column = 0; column < room.Width; ++column)
             {
                 if(line < Console.BufferHeight && column < Console.BufferWidth - 1)
                     Console.Write(drawBuffer[line, column]);
@@ -175,12 +170,14 @@ public class Game
             new MotionCommand { Direction = Direction.Left };
         ICommand moveRightCommand = new
             MotionCommand { Direction = Direction.Right };
+        ICommand stayCommand = new Command();
 
         exitCommand.OnExecute += ExitCommandHandler;
         moveUpCommand.OnExecute += player.MotionCommandHandler;
         moveDownCommand.OnExecute += player.MotionCommandHandler;
         moveLeftCommand.OnExecute += player.MotionCommandHandler;
         moveRightCommand.OnExecute += player.MotionCommandHandler;
+        stayCommand.OnExecute += player.StayCommandHandler;
         
         commands.Add(ConsoleKey.Escape, exitCommand);
         commands.Add(ConsoleKey.UpArrow, moveUpCommand);
@@ -191,6 +188,7 @@ public class Game
         commands.Add(ConsoleKey.S, moveDownCommand);
         commands.Add(ConsoleKey.A, moveLeftCommand);
         commands.Add(ConsoleKey.D, moveRightCommand);
+        commands.Add(ConsoleKey.Spacebar, stayCommand);
     }
 
     private void ExitCommandHandler(CommandData data)
@@ -201,7 +199,7 @@ public class Game
     private bool gameStopped;
     private static Game? instance;
 
-    private readonly char[,] drawBuffer;
+    private char[,] drawBuffer = null!;
     private Room room = null!;
     private readonly Player player;
 
