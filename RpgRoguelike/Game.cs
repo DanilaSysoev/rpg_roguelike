@@ -2,7 +2,6 @@ using RpgRoguelike.Core;
 using RpgRoguelike.Core.Control;
 using RpgRoguelike.Services.Base;
 using RpgRoguelike.Services.Building.Entities;
-using RpgRoguelike.Services.Building.Rooms;
 using RpgRoguelike.Services.Building.Weapons;
 
 namespace RpgRoguelike;
@@ -62,6 +61,8 @@ public class Game
 
     private void Update()
     {
+        player.Update();
+
         Cell curr = room.GetCell(player.Position);
         foreach(var reward in curr.Rewards)
             reward.Get(player);
@@ -69,7 +70,6 @@ public class Game
         curr.RemoveAllRewards();
 
         room.Update();
-        player.Update();
     }
 
     private void Render()
@@ -99,7 +99,7 @@ public class Game
     
     private Game()
     {
-        var hammer = new HammerBuilder().SetStunChance(30)
+        var hammer = new HammerBuilder().SetStunChance(100)
                                         .SetStunTime(1)
                                         .SetName("Hammer")
                                         .SetDamage(20)
@@ -170,12 +170,14 @@ public class Game
             new MotionCommand { Direction = Direction.Left };
         ICommand moveRightCommand = new
             MotionCommand { Direction = Direction.Right };
+        ICommand stayCommand = new Command();
 
         exitCommand.OnExecute += ExitCommandHandler;
         moveUpCommand.OnExecute += player.MotionCommandHandler;
         moveDownCommand.OnExecute += player.MotionCommandHandler;
         moveLeftCommand.OnExecute += player.MotionCommandHandler;
         moveRightCommand.OnExecute += player.MotionCommandHandler;
+        stayCommand.OnExecute += player.StayCommandHandler;
         
         commands.Add(ConsoleKey.Escape, exitCommand);
         commands.Add(ConsoleKey.UpArrow, moveUpCommand);
@@ -186,6 +188,7 @@ public class Game
         commands.Add(ConsoleKey.S, moveDownCommand);
         commands.Add(ConsoleKey.A, moveLeftCommand);
         commands.Add(ConsoleKey.D, moveRightCommand);
+        commands.Add(ConsoleKey.Spacebar, stayCommand);
     }
 
     private void ExitCommandHandler(CommandData data)

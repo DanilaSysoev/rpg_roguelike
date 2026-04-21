@@ -74,6 +74,11 @@ public class Room
         if(position.Column > MaxColumn) MaxColumn = position.Column;
     }
 
+    public Enemy? GetEnemyAt(Position nextPosition)
+    {
+        return enemies.FirstOrDefault(e => e.Position == nextPosition);
+    }
+
     private readonly Dictionary<Position, Cell> cells = new();
     private readonly List<Enemy> enemies = new();
 }

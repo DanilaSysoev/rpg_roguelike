@@ -9,32 +9,41 @@ public class Player : Entity
 
     public void MotionCommandHandler(CommandData data)
     {
-        Room room = Game.Instance.Room;
         switch (data.Direction)
         {
             case Direction.Up:
-                if (room.CanMoveTo(Position.UpNeighbor()))
-                    NextPosition = Position.UpNeighbor();
+                NextPosition = Position.UpNeighbor();
                 break;
             case Direction.Right:
-                if(room.CanMoveTo(Position.RightNeighbor()))
-                    NextPosition = Position.RightNeighbor();
+                NextPosition = Position.RightNeighbor();
                 break;
             case Direction.Down:
-                if (room.CanMoveTo(Position.DownNeighbor()))
-                    NextPosition = Position.DownNeighbor();
+                NextPosition = Position.DownNeighbor();
                 break;
             case Direction.Left:
-                if (room.CanMoveTo(Position.LeftNeighbor()))
-                    NextPosition = Position.LeftNeighbor();
+                NextPosition = Position.LeftNeighbor();
                 break;
         }
+    }
+
+    public void StayCommandHandler(CommandData data)
+    {
+        NextPosition = Position;
     }
 
     public override void Update()
     {
         base.Update();
-        Position = NextPosition;
+
+        Room room = Game.Instance.Room;
+        if (room.CanMoveTo(NextPosition))
+            Position = NextPosition;
+        else
+        {
+            Enemy? enemy = Game.Instance.Room.GetEnemyAt(NextPosition);
+            if (enemy is not null)
+                Attack(enemy);
+        }
         NextPosition = Position;
     }
 }
