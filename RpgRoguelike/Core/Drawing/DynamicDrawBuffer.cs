@@ -19,13 +19,7 @@ public class DynamicDrawBuffer : IDrawBuffer
 
     public void Clear()
     {
-        foreach(var line in buffer)
-        {
-            for(int i = 0; i < line.Count; i++)
-            {
-                line[i] = ' ';
-            }
-        }
+        buffer.Clear();
     }
 
     public void Flush()

@@ -27,8 +27,7 @@ public class Game
     {
         room = roomBuilder.Build();
 
-        
-        State = new GameplayState(new DynamicDrawBuffer());
+        State = new StartMenuState(new DynamicDrawBuffer());
         gameStopped = false;
     }
 
