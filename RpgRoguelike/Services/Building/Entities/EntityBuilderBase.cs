@@ -32,7 +32,7 @@ public class EntityBuilderBase<T> : IEntityBuilder<T> where T : Entity, new()
         this.position = position;
         return this;
     }
-    public EntityBuilderBase<T> SetWeapon(IWeapon weapon)
+    public EntityBuilderBase<T> SetWeapon(IWeapon? weapon)
     {
         this.weapon = weapon;
         return this;
