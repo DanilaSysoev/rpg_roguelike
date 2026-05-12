@@ -32,7 +32,8 @@ class JsonRepository<T> : IRepository<T> where T : DtoBase
     {
         if(File.Exists(filename))
             data = JsonSerializer.Deserialize<List<T>>(File.ReadAllText(filename))!;
-        maxId = data.Max(dto => dto.Id);
+        if(data.Count > 0)
+            maxId = data.Max(dto => dto.Id);
     }
 
     public void Remove(T dto)

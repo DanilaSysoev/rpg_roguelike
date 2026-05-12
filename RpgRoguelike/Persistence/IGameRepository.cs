@@ -10,5 +10,6 @@ public interface IGameRepository
     void SaveRoom(Room room);
     Room LoadRoom();
 
+    bool CanBeLoaded();
     void LoadFinish();
 }

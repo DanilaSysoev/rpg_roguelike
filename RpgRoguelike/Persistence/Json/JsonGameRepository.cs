@@ -22,6 +22,8 @@ public class JsonGameRepository : IGameRepository
         rewardRepo = new JsonRepository<RewardDto>(Path.Join(dataDir, "Rewards.json"));
         weaponRepo = new JsonRepository<WeaponDto>(Path.Join(dataDir, "Weapons.json"));
 
+        playerRepo.Load();
+        roomRepo.Load();
         cellRepo.Load();
         effectRepo.Load();
         enemyRepo.Load();
@@ -120,6 +122,9 @@ public class JsonGameRepository : IGameRepository
             WeaponId = weaponDtoId,
         };
         playerRepo.Add(playerDto);
+
+        playerRepo.Save();
+        weaponRepo.Save();
     }
 
     private static int SaveWeapon(IWeapon? weapon, IRepository<WeaponDto> repo)
@@ -133,6 +138,11 @@ public class JsonGameRepository : IGameRepository
     public void SaveRoom(Room room)
     {
         throw new NotImplementedException();
+    }
+
+    public bool CanBeLoaded()
+    {
+        return playerRepo.GetAll().Count() == 1;
     }
 
     public void LoadFinish()
@@ -156,6 +166,7 @@ public class JsonGameRepository : IGameRepository
         {
             Name = sword.Name,
             Damage = sword.Damage,
+            Type = "Sword",
         };
         repo.Add(res);
         return res;
@@ -171,6 +182,7 @@ public class JsonGameRepository : IGameRepository
             Damage = hammer.Damage,
             StunChance = hammer.StunChance,
             StunTime = hammer.StunTime,
+            Type = "Hammer",
         };
         repo.Add(res);
         return res;
@@ -186,6 +198,7 @@ public class JsonGameRepository : IGameRepository
             Damage = dagger.Damage,
             BleedingTime = dagger.BleedingTime,
             BleedingValue = dagger.BleedingValue,
+            Type = "Dagger",
         };
         repo.Add(res);
         return res;
@@ -203,6 +216,7 @@ public class JsonGameRepository : IGameRepository
             BurningPower = charm.BurningPower,
             BurningTime = charm.BurningTime,
             ChildId = childId,
+            Type = "FireCharm",
         };
         repo.Add(res);
         return res;

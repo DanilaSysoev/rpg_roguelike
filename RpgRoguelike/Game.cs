@@ -1,6 +1,8 @@
 using RpgRoguelike.Core;
 using RpgRoguelike.Core.Drawing;
 using RpgRoguelike.Core.GameStates;
+using RpgRoguelike.Persistence;
+using RpgRoguelike.Persistence.Json;
 using RpgRoguelike.Services.Base;
 using RpgRoguelike.Services.Building.Entities;
 using RpgRoguelike.Services.Building.Weapons;
@@ -47,6 +49,8 @@ public class Game
     public void Stop()
     {
         gameStopped = true;
+
+        gameRepository.SavePlayer(player);
     }
 
     private bool GemeIsEnded()
@@ -56,17 +60,27 @@ public class Game
     
     private Game()
     {
+        gameRepository = new JsonGameRepository(GameDataDir);
+
         var hammer = new HammerBuilder().SetStunChance(100)
                                         .SetStunTime(1)
                                         .SetName("Hammer")
                                         .SetDamage(20)
                                         .Build();
-        player = new PlayerBuilder().SetMaxHealth(100)
-                                    .SetHealth(50)
-                                    .SetPosition(new Position(5, 5))
-                                    .SetWeapon(hammer)
-                                    .SetName("Player")
-                                    .Build();
+        if (gameRepository.CanBeLoaded())
+        {
+            player = gameRepository.LoadPlayer();
+            gameRepository.LoadFinish();
+        }
+        else
+            player =
+                new PlayerBuilder()
+                    .SetMaxHealth(100)
+                    .SetHealth(50)
+                    .SetPosition(new Position(5, 5))
+                    .SetWeapon(hammer)
+                    .SetName("Player")
+                    .Build();
         gameStopped = false;
     }
 
@@ -75,4 +89,7 @@ public class Game
 
     private Room room = null!;
     private readonly Player player;
+
+    private const string GameDataDir = "GameData";
+    private readonly IGameRepository gameRepository;
 }
